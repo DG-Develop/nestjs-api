@@ -10,13 +10,18 @@ import {
   HttpStatus,
   HttpCode,
   Res,
-
+  // ParseIntPipe,
 } from '@nestjs/common';
 
-import { response, Response } from 'express'
+import { Response } from 'express';
+import { ParseIntPipe } from '../common/parse-int.pipe'
+import { ProductsService } from '../services/products.service';
 
 @Controller('products')
 export class ProductsController {
+  /*  NestJs Utiliza injeccion de dependencias entonces dicho constructor generara una instancia por nosotros */
+  constructor(private productService: ProductsService) {}
+
   /* Rutas con Querys */
   @Get()
   getProducts(
@@ -24,9 +29,11 @@ export class ProductsController {
     @Query('offset') offset = 0,
     @Query('brand') brand: string,
   ) {
-    return {
+    /* return {
       message: `products: limit => ${limit} offset => ${offset} brand => ${brand}`,
-    };
+    }; */
+
+    return this.productService.findAll();
   }
 
   /* Siempre hay que definir la rutas que no son dinamicas de las que si lo son */
@@ -40,32 +47,39 @@ export class ProductsController {
   /* Rutas con parametros */
   @Get(':productId')
   @HttpCode(HttpStatus.ACCEPTED)
-  getProduct(@Res() response: Response, @Param('productId') productId: string) {
-    response.status(200).json({
+  /* El uso de Pipes nos ayuda a que en la direccion http que se envie por parametro se castee al valor deseado y en caso de no poder
+  castearlo se detendra la ejecucion del controlador */
+  getProduct(@Param('productId', ParseIntPipe) productId: number) {
+    /* response.status(200).json({
       message: `product ${productId}`,
-    });
+    }); */
+
+    return this.productService.findOne(productId);
   }
 
   @Post()
   create(@Body() payload: any) {
-    return {
+    /* return {
       message: 'accion de crear',
       payload,
-    };
+    }; */
+    return this.productService.create(payload);
   }
 
   @Put(':productId')
-  actualizar(@Body() payload: any, @Param('productId') productId: number) {
-    return {
-      productId,
-      payload,
-    };
+  actualizar(@Body() payload: any, @Param('productId') productId: string) {
+    // return {
+    //   productId,
+    //   payload,
+    // };
+    return this.productService.update(parseInt(productId), payload);
   }
 
   @Delete(':productId')
-  eliminar(@Param('productId') productId: number) {
-    return {
-      productId,
-    };
+  eliminar(@Param('productId') productId: string) {
+    // return {
+    //   productId,
+    // };
+    return this.productService.delete(parseInt(productId));
   }
 }

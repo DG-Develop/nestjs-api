@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import {Product} from '../entities/product.entitie'
+import { Product } from '../entities/product.entitie';
 
 @Injectable()
 export class ProductsService {
-  private counterID = 1
+  private counterID = 1;
   private products: Product[] = [
     {
       id: 1,
@@ -16,20 +16,51 @@ export class ProductsService {
     },
   ];
 
-  findAll(){
+  findAll() {
     return this.products;
   }
 
-  findOne(id: number){
-    return this.products.find((product) => product.id === id);
+  findOne(id: number) {
+
+    const product = this.products.find((product) => product.id === id);
+    if(!product){
+      throw new NotFoundException(`Product #${id} not found`)
+    }
+
+    return product
   }
 
-  create(payload : any){
-   const newProduct = {
-     id: ++this.counterID,
-     ...payload
-   };
-   this.products.push(newProduct)
-   return newProduct;
+  create(payload: any) {
+    const newProduct = {
+      id: ++this.counterID,
+      ...payload,
+    };
+    this.products.push(newProduct);
+    return newProduct;
+  }
+
+  update(id: number, payload: any){
+    const product = this.findOne(id);
+    console.log(product)
+    if(product){
+      const index = this.products.findIndex((product) => product.id === id)
+      this.products[index] = {
+        ...product,
+        ...payload
+      }
+      return this.products[index]
+    }
+
+    return null;
+  }
+
+  delete(id: number){
+    const product = this.findOne(id)
+    if(product){
+      const modifiedList = this.products.filter(product => product.id !== id)
+      this.products = modifiedList
+      return id
+    }
+    return null
   }
 }
