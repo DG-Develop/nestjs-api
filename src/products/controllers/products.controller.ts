@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
-import { ParseIntPipe } from '../common/parse-int.pipe';
+import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDTO, UpdateProductDTO } from '../dtos/products.dtos';
 
