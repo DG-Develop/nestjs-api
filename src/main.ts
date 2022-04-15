@@ -11,6 +11,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true, //Le avisa al cliente que los datos puestos de mas no son validos
     }),
   );
-  await app.listen(3003);
+  await app.listen(3000);
 }
 bootstrap();
