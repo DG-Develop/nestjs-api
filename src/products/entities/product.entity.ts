@@ -1,12 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class Customer {
+export class Product {
   @ApiProperty()
   id: number;
   @ApiProperty()
   name: string;
   @ApiProperty()
-  lastName: string;
+  description: string;
   @ApiProperty()
-  phone: string;
+  price: number;
+  @ApiProperty()
+  stock: number;
+  @ApiProperty()
+  image: string;
 }

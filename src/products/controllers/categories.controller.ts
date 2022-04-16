@@ -10,8 +10,10 @@ import {
 } from '@nestjs/common';
 
 import { CategoriesService } from '../services/categories.service';
-import { CreateCategoryDto, UpdateCategoryDto } from '../dtos/category.dtos';
+import { CreateCategoryDto, UpdateCategoryDto } from '../dtos/category.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}

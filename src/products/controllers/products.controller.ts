@@ -16,8 +16,10 @@ import {
 import { Response } from 'express';
 import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { ProductsService } from '../services/products.service';
-import { CreateProductDTO, UpdateProductDTO } from '../dtos/products.dtos';
+import { CreateProductDTO, UpdateProductDTO } from '../dtos/products.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   /*  NestJs Utiliza injeccion de dependencias entonces dicho constructor generara una instancia por nosotros */
@@ -25,6 +27,7 @@ export class ProductsController {
 
   /* Rutas con Querys */
   @Get()
+  @ApiOperation({ summary: 'List of products ' })
   getProducts(
     @Query('limit') limit = 100,
     @Query('offset') offset = 0,
@@ -68,7 +71,10 @@ export class ProductsController {
   }
 
   @Put(':productId')
-  actualizar(@Body() payload: UpdateProductDTO, @Param('productId') productId: string) {
+  actualizar(
+    @Body() payload: UpdateProductDTO,
+    @Param('productId') productId: string,
+  ) {
     // return {
     //   productId,
     //   payload,
