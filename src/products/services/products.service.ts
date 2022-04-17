@@ -22,17 +22,16 @@ export class ProductsService {
   }
 
   findOne(id: number) {
-
     const product = this.products.find((product) => product.id === id);
-    if(!product){
-      throw new NotFoundException(`Product #${id} not found`)
+    if (!product) {
+      throw new NotFoundException(`Product #${id} not found`);
     }
 
-    return product
+    return product;
   }
 
   create(payload: CreateProductDTO) {
-    console.log(payload)
+    console.log(payload);
     const newProduct = {
       id: ++this.counterID,
       ...payload,
@@ -41,28 +40,28 @@ export class ProductsService {
     return newProduct;
   }
 
-  update(id: number, payload: UpdateProductDTO){
+  update(id: number, payload: UpdateProductDTO) {
     const product = this.findOne(id);
-    console.log(product)
-    if(product){
-      const index = this.products.findIndex((product) => product.id === id)
+    console.log(product);
+    if (product) {
+      const index = this.products.findIndex((product) => product.id === id);
       this.products[index] = {
         ...product,
-        ...payload
-      }
-      return this.products[index]
+        ...payload,
+      };
+      return this.products[index];
     }
 
     return null;
   }
 
-  delete(id: number){
-    const product = this.findOne(id)
-    if(product){
-      const modifiedList = this.products.filter(product => product.id !== id)
-      this.products = modifiedList
-      return id
+  delete(id: number) {
+    const product = this.findOne(id);
+    if (product) {
+      const modifiedList = this.products.filter((product) => product.id !== id);
+      this.products = modifiedList;
+      return id;
     }
-    return null
+    return null;
   }
 }
