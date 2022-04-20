@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import * as Joi from 'joi';
-
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
