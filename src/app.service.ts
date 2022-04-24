@@ -18,7 +18,8 @@ export class AppService {
     return `Hello World! ${apiKey} ${name}`;
   }
 
-  getTasks(){
-    this.database.collection('taks')
+  getTasks() {
+    const taskColletion = this.database.collection('tasks');
+    return taskColletion.find().toArray();
   }
 }

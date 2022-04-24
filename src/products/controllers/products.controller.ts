@@ -15,8 +15,13 @@ import {
 
 import { Response } from 'express';
 import { ParseIntPipe } from '../../common/parse-int.pipe';
+import { MongoIdPipe } from '../../common/mongo-id.pipe';
 import { ProductsService } from '../services/products.service';
-import { CreateProductDTO, UpdateProductDTO } from '../dtos/products.dto';
+import {
+  CreateProductDTO,
+  UpdateProductDTO,
+  FilterProductsDTO,
+} from '../dtos/products.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Products')
@@ -28,16 +33,8 @@ export class ProductsController {
   /* Rutas con Querys */
   @Get()
   @ApiOperation({ summary: 'List of products ' })
-  getProducts(
-    @Query('limit') limit = 100,
-    @Query('offset') offset = 0,
-    @Query('brand') brand: string,
-  ) {
-    /* return {
-      message: `products: limit => ${limit} offset => ${offset} brand => ${brand}`,
-    }; */
-
-    return this.productService.findAll();
+  getProducts(@Query() params: FilterProductsDTO) {
+    return this.productService.findAll(params);
   }
 
   /* Siempre hay que definir la rutas que no son dinamicas de las que si lo son */
@@ -53,11 +50,7 @@ export class ProductsController {
   @HttpCode(HttpStatus.ACCEPTED)
   /* El uso de Pipes nos ayuda a que en la direccion http que se envie por parametro se castee al valor deseado y en caso de no poder
   castearlo se detendra la ejecucion del controlador */
-  getProduct(@Param('productId', ParseIntPipe) productId: number) {
-    /* response.status(200).json({
-      message: `product ${productId}`,
-    }); */
-
+  getProduct(@Param('productId', MongoIdPipe) productId: string) {
     return this.productService.findOne(productId);
   }
 
@@ -73,20 +66,20 @@ export class ProductsController {
   @Put(':productId')
   actualizar(
     @Body() payload: UpdateProductDTO,
-    @Param('productId') productId: string,
+    @Param('productId', MongoIdPipe) productId: string,
   ) {
     // return {
     //   productId,
     //   payload,
     // };
-    return this.productService.update(parseInt(productId), payload);
+    return this.productService.update(productId, payload);
   }
 
   @Delete(':productId')
-  eliminar(@Param('productId') productId: string) {
+  eliminar(@Param('productId', MongoIdPipe) productId: string) {
     // return {
     //   productId,
     // };
-    return this.productService.delete(parseInt(productId));
+    return this.productService.delete(productId);
   }
 }

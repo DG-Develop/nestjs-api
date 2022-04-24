@@ -1,11 +1,35 @@
 import { Module, Global } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { MongoClient } from 'mongodb';
+
+import config from '../config';
 
 const API_KEY = '12345634';
 const API_KEY_PROD = 'PROD12312312';
 
 @Global() //Todos los providers seran globales
 @Module({
+  imports: [
+    // MongooseModule.forRoot('mongodb://localhost:2718', {
+    //   user: 'root',
+    //   pass: 'root',
+    //   dbName: 'platzi-store',
+    // }),
+    MongooseModule.forRootAsync({
+      useFactory: (configService: ConfigType<typeof config>) => {
+        const { connection, user, password, host, port, dbName } =
+          configService.mongo;
+        return {
+          uri:  `${connection}://${host}:${port}`,
+          user,
+          pass: password,
+          dbName
+        }
+      },
+      inject: [config.KEY],
+    }),
+  ],
   providers: [
     {
       provide: 'API_KEY',
@@ -13,17 +37,19 @@ const API_KEY_PROD = 'PROD12312312';
     },
     {
       provide: 'MONGO',
-      useFactory: async () => {
-        const uri =
-          'mongodb://root:root@localhost:27018/?authMechanism=DEFAULT';
+      useFactory: async (configService: ConfigType<typeof config>) => {
+        const { connection, user, password, host, port, dbName } =
+          configService.mongo;
+        const uri = `${connection}://${user}:${password}@${host}:${port}/?authMechanism=DEFAULT`;
 
         const client = new MongoClient(uri);
         await client.connect();
-        const database = client.db('platzi-store');
+        const database = client.db(`${dbName}`);
         return database;
       },
+      inject: [config.KEY],
     },
   ],
-  exports: ['API_KEY', 'MONGO'],
+  exports: ['API_KEY', 'MONGO', MongooseModule],
 })
 export class DatabaseModule {}
