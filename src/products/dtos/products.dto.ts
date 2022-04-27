@@ -6,9 +6,14 @@ import {
   IsPositive,
   IsOptional,
   Min,
+  ValidateIf,
+  ValidateNested,
+  IsMongoId
 } from 'class-validator';
 
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+
+import { CreateCategoryDto } from './category.dto'
 
 export class CreateProductDTO {
   @ApiProperty()
@@ -37,6 +42,16 @@ export class CreateProductDTO {
   @IsUrl()
   @IsNotEmpty()
   readonly image: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @ValidateNested()
+  readonly category: CreateCategoryDto;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsMongoId()
+  readonly brand: string;
 }
 
 /* Hace un mapeo de la clase que se desea copiar todos sus atributos pero estos mismos se vuelven parciales o para mayor entendiemiento
@@ -51,4 +66,13 @@ export class FilterProductsDTO {
   @IsOptional()
   @Min(0)
   offset: number;
+
+  @IsOptional()
+  @Min(0)
+  minPrice: number;
+
+  // Con el validateIf verificamos si existe el parametro minPrice entonces este campo se vuelve obligatorio
+  @ValidateIf((params) => params.minPrice)
+  @IsPositive()
+  maxPrice: number;
 }

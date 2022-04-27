@@ -1,10 +1,16 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { Document } from 'mongoose';
 
-export class Brand {
+@Schema()
+export class Brand extends Document {
   @ApiProperty()
-  id: number;
-  @ApiProperty()
+  @Prop({ required: true, unique: true })
   name: string;
+
+  @Prop()
   @ApiProperty()
   image: string;
 }
+
+export const BrandSchema = SchemaFactory.createForClass(Brand);
