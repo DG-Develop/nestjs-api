@@ -8,12 +8,15 @@ import {
   Min,
   ValidateIf,
   ValidateNested,
-  IsMongoId
+  IsMongoId,
+  IsArray
 } from 'class-validator';
 
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 import { CreateCategoryDto } from './category.dto'
+import { CreateSubDocDto } from './sub-doc.dto';
+import { Type } from 'class-transformer';
 
 export class CreateProductDTO {
   @ApiProperty()
@@ -52,6 +55,16 @@ export class CreateProductDTO {
   @IsNotEmpty()
   @IsMongoId()
   readonly brand: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  readonly subDoc: CreateSubDocDto;  // 👈 1:1
+
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateSubDocDto)
+  readonly subDocs: CreateSubDocDto[]
 }
 
 /* Hace un mapeo de la clase que se desea copiar todos sus atributos pero estos mismos se vuelven parciales o para mayor entendiemiento

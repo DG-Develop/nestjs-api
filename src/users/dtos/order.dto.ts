@@ -18,4 +18,13 @@ export class CreateOrderDto {
   readonly products: string[];
 }
 
-export class UpdateOrderDto extends PartialType(CreateOrderDto) {}
+export class UpdateOrderDto extends PartialType(
+  OmitType(CreateOrderDto, ['products']),
+) {}
+
+export class AddProductsToOrderDto {
+  @ApiProperty()
+  @IsArray()
+  @IsNotEmpty()
+  readonly productsIds: string[];
+}
