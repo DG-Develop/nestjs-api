@@ -1,68 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { Product } from '../entities/product.entity';
 import { CreateProductDTO, UpdateProductDTO } from '../dtos/products.dto';
 
 @Injectable()
 export class ProductsService {
-  private counterID = 1;
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Product 1',
-      description: 'desc',
-      price: 122,
-      image: '',
-      stock: 12,
-    },
-  ];
+  constructor(
+    @InjectRepository(Product) private productRepo: Repository<Product>,
+  ) {}
 
   findAll() {
-    return this.products;
+    return this.productRepo.find();
   }
 
-  findOne(id: number) {
-
-    const product = this.products.find((product) => product.id === id);
-    if(!product){
-      throw new NotFoundException(`Product #${id} not found`)
+  async findOne(id: number) {
+    const product = await this.productRepo.findOne(id);
+    if (!product) {
+      throw new NotFoundException(`Product #${id} not found`);
     }
 
-    return product
+    return product;
   }
 
   create(payload: CreateProductDTO) {
-    console.log(payload)
-    const newProduct = {
-      id: ++this.counterID,
-      ...payload,
-    };
-    this.products.push(newProduct);
-    return newProduct;
+    // const newProduct = new Product()
+    // newProduct.image = payload.image
+    // newProduct.name = payload.name
+    // newProduct.description = payload.description
+    // newProduct.price = payload.price
+    // newProduct.stock = payload.stock
+    const newProduct = this.productRepo.create(payload);
+
+    return this.productRepo.save(newProduct);
   }
 
-  update(id: number, payload: UpdateProductDTO){
-    const product = this.findOne(id);
-    console.log(product)
-    if(product){
-      const index = this.products.findIndex((product) => product.id === id)
-      this.products[index] = {
-        ...product,
-        ...payload
-      }
-      return this.products[index]
-    }
-
-    return null;
+  async update(id: number, payload: UpdateProductDTO) {
+    const product = await this.productRepo.findOne(id);
+    this.productRepo.merge(product, payload);
+    return this.productRepo.save(product);
   }
 
-  delete(id: number){
-    const product = this.findOne(id)
-    if(product){
-      const modifiedList = this.products.filter(product => product.id !== id)
-      this.products = modifiedList
-      return id
-    }
-    return null
+  delete(id: number) {
+    return this.productRepo.delete(id);
   }
 }

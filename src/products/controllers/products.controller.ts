@@ -73,20 +73,20 @@ export class ProductsController {
   @Put(':productId')
   actualizar(
     @Body() payload: UpdateProductDTO,
-    @Param('productId') productId: string,
+    @Param('productId') productId: number,
   ) {
     // return {
     //   productId,
     //   payload,
     // };
-    return this.productService.update(parseInt(productId), payload);
+    return this.productService.update(productId, payload);
   }
 
   @Delete(':productId')
-  eliminar(@Param('productId') productId: string) {
+  eliminar(@Param('productId') productId: number) {
     // return {
     //   productId,
     // };
-    return this.productService.delete(parseInt(productId));
+    return this.productService.delete(productId);
   }
 }
