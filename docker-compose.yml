@@ -18,3 +18,25 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=root
     ports:
       - '5051:80'
+    depends_on:
+      - postgres
+
+  mysql:
+    image: mysql:5.7.38-oracle
+    environment:
+      - MYSQL_DATABASE=my_db
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:apache
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - PMA_HOST=mysql
+    ports:
+      - '8080:80'
+    depends_on:
+      - mysql
