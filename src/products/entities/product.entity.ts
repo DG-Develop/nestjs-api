@@ -4,8 +4,11 @@ import {
   Entity,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+
+import { Brand } from './brand.entity';
 
 @Entity()
 export class Product {
@@ -35,17 +38,19 @@ export class Product {
 
   @CreateDateColumn({
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP'
+    default: () => 'CURRENT_TIMESTAMP',
   })
   @ApiProperty()
   createAt: Date;
 
   @UpdateDateColumn({
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP'
+    default: () => 'CURRENT_TIMESTAMP',
   })
-
   @ApiProperty()
   updateAt: Date;
 
+  @ApiProperty()
+  @ManyToOne(() => Brand, (brand) => brand.products)
+  brand: Brand
 }

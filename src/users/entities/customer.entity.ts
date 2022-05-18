@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   Entity,
   Column,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
@@ -12,7 +12,7 @@ import { User } from './user.entity';
 
 @Entity()
 export class Customer {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
 
@@ -42,6 +42,7 @@ export class Customer {
   @ApiProperty()
   updateAt: Date;
 
+  @ApiProperty()
   @OneToOne(() => User, (user) => user.customer, { nullable: true })
   user: User;
 }
