@@ -4,11 +4,14 @@ import {
   Entity,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne
+  ManyToOne,
+  ManyToMany,
+  JoinTable
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { Brand } from './brand.entity';
+import {Category} from './category.entity'
 
 @Entity()
 export class Product {
@@ -53,4 +56,9 @@ export class Product {
   @ApiProperty()
   @ManyToOne(() => Brand, (brand) => brand.products)
   brand: Brand
+
+  @ApiProperty()
+  @ManyToMany(() => Category, (category) => category.products)
+  @JoinTable() // En la relación de muchos a muchos el JoinTable va en un solo atributo pero puedes ponerlo sin importar en cual de los dos quieras ponerlo
+  categories: Category[];
 }

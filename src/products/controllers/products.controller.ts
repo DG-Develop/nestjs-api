@@ -9,12 +9,10 @@ import {
   Query,
   HttpStatus,
   HttpCode,
-  Res,
+  ParseIntPipe
   // ParseIntPipe,
 } from '@nestjs/common';
 
-import { Response } from 'express';
-import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDTO, UpdateProductDTO } from '../dtos/products.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -82,11 +80,32 @@ export class ProductsController {
     return this.productService.update(productId, payload);
   }
 
+  @Put(':productId/category/:categoryId')
+  addCategoryToProduct(
+    @Param('productId') productId: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+    // return {
+    //   productId,
+    //   payload,
+    // };
+    return this.productService.addCategoryToProduct(productId, categoryId);
+  }
+
   @Delete(':productId')
   eliminar(@Param('productId') productId: number) {
     // return {
     //   productId,
     // };
     return this.productService.delete(productId);
+  }
+
+  @Delete(':productId/category/:categoryId')
+  deleteCatetory(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+
+    return this.productService.removeCategoryByProduct(productId, categoryId);
   }
 }
