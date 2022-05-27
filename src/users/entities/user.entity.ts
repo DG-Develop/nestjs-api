@@ -46,6 +46,6 @@ export class User {
   // La relación uno uno debe de hacerse de un solo lado con el decorador JoinColumn
   @ApiProperty()
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'customer_id' })
   customer: Customer;
 }

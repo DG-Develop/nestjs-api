@@ -6,14 +6,17 @@ import {
   UpdateDateColumn,
   ManyToOne,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  Index,
+  JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { Brand } from './brand.entity';
-import {Category} from './category.entity'
+import { Category } from './category.entity';
 
-@Entity()
+@Entity({ name: 'products' })
+@Index(['price', 'stock'])
 export class Product {
   @PrimaryGeneratedColumn()
   @ApiProperty()
@@ -27,6 +30,7 @@ export class Product {
   @ApiProperty()
   description: string;
 
+  @Index()
   @Column({ type: 'int' })
   @ApiProperty()
   price: number;
@@ -40,6 +44,7 @@ export class Product {
   image: string;
 
   @CreateDateColumn({
+    name: 'create_at',
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
@@ -47,6 +52,7 @@ export class Product {
   createAt: Date;
 
   @UpdateDateColumn({
+    name: 'update_at',
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
@@ -55,10 +61,19 @@ export class Product {
 
   @ApiProperty()
   @ManyToOne(() => Brand, (brand) => brand.products)
-  brand: Brand
+  @JoinColumn({ name: 'brand_id' })
+  brand: Brand;
 
   @ApiProperty()
   @ManyToMany(() => Category, (category) => category.products)
-  @JoinTable() // En la relación de muchos a muchos el JoinTable va en un solo atributo pero puedes ponerlo sin importar en cual de los dos quieras ponerlo
+  @JoinTable({
+    name: 'products_categories',
+    joinColumn: {
+      name: 'product_id'
+    },
+    inverseJoinColumn:{
+      name: 'category_id'
+    }
+  }) // En la relación de muchos a muchos el JoinTable va en un solo atributo pero puedes ponerlo sin importar en cual de los dos quieras ponerlo
   categories: Category[];
 }

@@ -9,12 +9,16 @@ import {
   Query,
   HttpStatus,
   HttpCode,
-  ParseIntPipe
+  ParseIntPipe,
   // ParseIntPipe,
 } from '@nestjs/common';
 
 import { ProductsService } from '../services/products.service';
-import { CreateProductDTO, UpdateProductDTO } from '../dtos/products.dto';
+import {
+  CreateProductDTO,
+  FilterProductsDto,
+  UpdateProductDTO,
+} from '../dtos/products.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Products')
@@ -26,16 +30,12 @@ export class ProductsController {
   /* Rutas con Querys */
   @Get()
   @ApiOperation({ summary: 'List of products ' })
-  getProducts(
-    @Query('limit') limit = 100,
-    @Query('offset') offset = 0,
-    @Query('brand') brand: string,
-  ) {
+  getProducts(@Query() params: FilterProductsDto) {
     /* return {
       message: `products: limit => ${limit} offset => ${offset} brand => ${brand}`,
     }; */
 
-    return this.productService.findAll();
+    return this.productService.findAll(params);
   }
 
   /* Siempre hay que definir la rutas que no son dinamicas de las que si lo son */
@@ -105,7 +105,6 @@ export class ProductsController {
     @Param('productId', ParseIntPipe) productId: number,
     @Param('categoryId', ParseIntPipe) categoryId: number,
   ) {
-
     return this.productService.removeCategoryByProduct(productId, categoryId);
   }
 }
