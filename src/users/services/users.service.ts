@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Db } from 'mongodb';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
 
 import { User } from '../entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
@@ -28,6 +29,10 @@ export class UsersService {
     return this.userModel.findById(id);
   }
 
+  findByEmail(email: string) {
+    return this.userModel.findOne({ email: email });
+  }
+
   async getOrdersByUser(userId: string) {
     const user = await this.findOne(userId);
     return {
@@ -38,8 +43,11 @@ export class UsersService {
     };
   }
 
-  create(data: CreateUserDto) {
+  async create(data: CreateUserDto) {
     const newModel = new this.userModel(data);
+    const hashPassword = await bcrypt.hash(newModel.password, 10);
+    newModel.password = hashPassword;
+
     return newModel.save();
   }
 
