@@ -14,7 +14,7 @@ export class UsersService {
     private productsService: ProductsService,
     @Inject('MONGO') private databaseMongo: Db,
     @InjectModel(User.name) private userModel: Model<User>,
-  ) {}
+  ) { }
 
   findAll() {
     return this.userModel.find().exec();
@@ -30,7 +30,7 @@ export class UsersService {
   }
 
   findByEmail(email: string) {
-    return this.userModel.findOne({ email: email });
+    return this.userModel.findOne({ email: email }).exec();
   }
 
   async getOrdersByUser(userId: string) {
@@ -48,7 +48,9 @@ export class UsersService {
     const hashPassword = await bcrypt.hash(newModel.password, 10);
     newModel.password = hashPassword;
 
-    return newModel.save();
+    const model = await newModel.save();
+    const { password, ...rta } = model.toJSON();
+    return rta;
   }
 
   update(id: string, changes: UpdateUserDto) {

@@ -10,7 +10,6 @@ export class User extends Document {
   email: string;
 
   @ApiProperty()
-  @Exclude()
   @Prop({ required: true })
   password: string;
 
