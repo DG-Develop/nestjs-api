@@ -1,13 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn, } from 'typeorm';
 
 import { Customer } from './customer.entity';
 
@@ -21,6 +14,7 @@ export class User {
   @ApiProperty()
   email: string;
 
+  @Exclude()
   @Column({ type: 'varchar', length: 255 })
   @ApiProperty()
   password: string;
