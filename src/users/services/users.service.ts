@@ -37,12 +37,17 @@ export class UsersService {
     return user;
   }
 
+  findByEmail(email: string) {
+    return this.userRepo.findOne({ where: { email } });
+  }
+
+
   async create(data: CreateUserDto) {
     const newUser = this.userRepo.create(data);
     const hashPassword = await bcrypt.hash(newUser.password, 10);
 
     if (data.customerId) {
-      const customer = await this.customerService.findOne(data.customerId)
+      const customer = await this.customerService.findOne(`${data.customerId}`)
       newUser.customer = customer
     }
     newUser.password = hashPassword;
