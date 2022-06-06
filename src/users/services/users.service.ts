@@ -47,7 +47,7 @@ export class UsersService {
     const hashPassword = await bcrypt.hash(newUser.password, 10);
 
     if (data.customerId) {
-      const customer = await this.customerService.findOne(`${data.customerId}`)
+      const customer = await this.customerService.findOne(data.customerId)
       newUser.customer = customer
     }
     newUser.password = hashPassword;
