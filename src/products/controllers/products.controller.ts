@@ -10,6 +10,7 @@ import {
   HttpStatus,
   HttpCode,
   Res,
+  UseGuards
   // ParseIntPipe,
 } from '@nestjs/common';
 
@@ -23,7 +24,10 @@ import {
   FilterProductsDTO,
 } from '../dtos/products.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Public } from'../../auth/decorators/public.decorator'
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
@@ -31,6 +35,7 @@ export class ProductsController {
   constructor(private productService: ProductsService) {}
 
   /* Rutas con Querys */
+  @Public()
   @Get()
   @ApiOperation({ summary: 'List of products ' })
   getProducts(@Query() params: FilterProductsDTO) {
@@ -46,6 +51,7 @@ export class ProductsController {
   }
 
   /* Rutas con parametros */
+  @Public()
   @Get(':productId')
   @HttpCode(HttpStatus.ACCEPTED)
   /* El uso de Pipes nos ayuda a que en la direccion http que se envie por parametro se castee al valor deseado y en caso de no poder
