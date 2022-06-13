@@ -7,7 +7,7 @@ import { CreateOrderDto, UpdateOrderDto } from '../dtos/order.dto';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<Order>) {}
+  constructor(@InjectModel(Order.name) private orderModel: Model<Order>) { }
 
   findAll() {
     return this.orderModel
@@ -47,5 +47,9 @@ export class OrdersService {
       $addToSet: { products: productsIds },
     });
     return order.save();
+  }
+
+  ordersByCustomer(customerId: string) {
+    return this.orderModel.findOne({ customer: customerId });
   }
 }
