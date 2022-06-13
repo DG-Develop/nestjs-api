@@ -22,9 +22,12 @@ import {
 } from '../dtos/products.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Public } from'../../auth/decorators/public.decorator'
+import { Roles } from'../../auth/decorators/roles.decorator'
+import { Role } from'../../auth/models/roles.model'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
@@ -65,6 +68,7 @@ export class ProductsController {
     return this.productService.findOne(productId);
   }
 
+  @Roles(Role.ADMIN)
   @Post()
   create(@Body() payload: CreateProductDTO) {
     /* return {
